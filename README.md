@@ -18,6 +18,9 @@ ohmyzsh::install { 'user1': }
 # for multiple users in one shot and set their shell to zsh
 ohmyzsh::install { ['root', 'user1']: set_sh => true }
 
+# install and disable prompt for automatic updates
+ohmyzsh::install { 'user2': disable_auto_update => true }
+
 # install a theme for a user
 ohmyzsh::fetch::theme { 'root': url => 'http://zanloy.com/files/dotfiles/oh-my-zsh/squared.zsh-theme' }
 

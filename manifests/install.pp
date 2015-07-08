@@ -85,7 +85,7 @@ define ohmyzsh::install(
   file_line { "ohmyzsh::disable_auto_update ${name}":
     path  => "${home}/.zshrc",
     line  => "DISABLE_AUTO_UPDATE=\"${disable_auto_update}\"",
-    match => ".*DISABLE_AUTO_UPDATE.*",
+    match => '.*DISABLE_AUTO_UPDATE.*',
   }
 
 }
