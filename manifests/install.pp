@@ -11,6 +11,7 @@
 # === Parameters
 #
 # set_sh: (boolean) whether to change the user shell to zsh
+# disable_auto_update: (boolean) whether to prompt for updates bi-weekly
 #
 # === Authors
 #
@@ -22,7 +23,8 @@
 # Copyright 2014
 #
 define ohmyzsh::install(
-  $set_sh = false,
+  $set_sh              = false,
+  $disable_auto_update = false,
 ) {
 
   include ohmyzsh::params
@@ -61,6 +63,7 @@ define ohmyzsh::install(
     onlyif  => "getent passwd ${name} | cut -d : -f 6 | xargs test -e",
     user    => $name,
     require => Exec["ohmyzsh::git clone ${name}"],
+    before  => File_Line["ohmyzsh::disable_auto_update ${name}"],
   }
 
   if $set_sh {
@@ -78,4 +81,11 @@ define ohmyzsh::install(
       }
     }
   }
+
+  file_line { "ohmyzsh::disable_auto_update ${name}":
+    path  => "${home}/.zshrc",
+    line  => "DISABLE_AUTO_UPDATE=\"${disable_auto_update}\"",
+    match => ".*DISABLE_AUTO_UPDATE.*",
+  }
+
 }

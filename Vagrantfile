@@ -7,9 +7,16 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "hashicorp/precise64"
+  config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
 
   config.vm.synced_folder ".", "/etc/puppet/modules/ohmyzsh"
+
+  config.vm.provision :shell, inline: <<-EOF
+    gem install rspec-puppet --no-user-install --no-ri --no-rdoc
+    gem install puppetlabs_spec_helper --no-user-install --no-ri --no-rdoc
+    apt-get update
+    puppet module install puppetlabs/stdlib
+  EOF
 
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "tests"

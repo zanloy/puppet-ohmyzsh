@@ -6,8 +6,8 @@ testcases = {
     expect: { home: '/home/user1', sh: false }
   },
   'user2' => {
-    params: { set_sh: true },
-    expect: { home: '/home/user2', sh: true }
+    params: { set_sh: true, disable_auto_update: true },
+    expect: { home: '/home/user2', sh: true, disable_auto_update: true }
   },
   'root' => {
     params: { },
@@ -37,6 +37,19 @@ describe 'ohmyzsh::install' do
           should contain_user("ohmyzsh::user #{user}")
             .with_name(user)
             .with_shell("/usr/bin/zsh")
+        end
+      end
+      if values[:expect][:disable_auto_update]
+        it do
+          should contain_file_line("ohmyzsh::disable_auto_update #{user}")
+            .with_path("#{values[:expect][:home]}/.zshrc")
+            .with_line('DISABLE_AUTO_UPDATE="true"')
+        end
+      else
+        it do
+          should contain_file_line("ohmyzsh::disable_auto_update #{user}")
+            .with_path("#{values[:expect][:home]}/.zshrc")
+            .with_line('DISABLE_AUTO_UPDATE="false"')
         end
       end
     end
