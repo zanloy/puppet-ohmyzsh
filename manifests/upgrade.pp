@@ -21,13 +21,23 @@
 #
 # Copyright 2014
 #
-define ohmyzsh::upgrade {
+define ohmyzsh::upgrade (
+  $schedule = 'daily',
+) {
 
   include ohmyzsh::params
 
   if ! defined(Package['git']) {
     package { 'git':
       ensure => present,
+    }
+  }
+
+  if ! defined(Schedule['daily']) {
+    schedule { 'daily':
+      range  => '2 - 4',
+      period => 'daily',
+      repeat => 1,
     }
   }
 
@@ -38,11 +48,12 @@ define ohmyzsh::upgrade {
   }
 
   exec { "ohmyzsh::git upgrade ${name}":
-    command => 'git pull --rebase --stat origin master',
-    path    => ['/bin', '/usr/bin'],
-    cwd     => "${home}/.oh-my-zsh",
-    user    => $name,
-    require => Package['git'],
+    command  => 'git pull --rebase --stat origin master',
+    path     => ['/bin', '/usr/bin'],
+    cwd      => "${home}/.oh-my-zsh",
+    user     => $name,
+    schedule => $schedule,
+    require  => Package['git'],
   }
 
 }
