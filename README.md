@@ -11,7 +11,7 @@ for more details.
 
 ## Usage
 
-```
+```puppet
 # for a single user
 ohmyzsh::install { 'user1': }
 
@@ -34,6 +34,9 @@ ohmyzsh::plugins { 'user1': plugins => 'git github' }
 
 # upgrade oh-my-zsh for a single user
 ohmyzsh::upgrade { 'user1': }
+
+# upgrade oh-my-zsh on a different schedule (only 'daily' is defined, you are responsible for creating additional schedules)
+ohmyzsh::upgrade { 'user1': schedule => 'weekly' }
 ```
 
 Support
