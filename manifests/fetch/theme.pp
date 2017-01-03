@@ -1,17 +1,17 @@
 define ohmyzsh::fetch::theme (
   $filename,
+  $user,
   $url = 'UNSET',
   $source = 'UNSET',
   $content = 'UNSET',
-  $filename = 'UNSET',
 ) {
 
-  validate_string($filename, $url, $source, $content, $filename)
+  validate_string($filename, $url, $source, $content, $user)
 
-  if $name == 'root' {
+  if $user == 'root' {
     $home = '/root'
   } else {
-    $home = "/home/${name}"
+    $home = "/home/${user}"
   }
 
   $themepath = "${home}/.oh-my-zsh/custom/themes"
@@ -20,30 +20,30 @@ define ohmyzsh::fetch::theme (
   if ! defined(File[$themepath]) {
     file { $themepath:
       ensure  => directory,
-      owner   => $name,
+      owner   => $user,
       require => Ohmyzsh::Install[$name],
     }
   }
 
   if $url != 'UNSET' {
-    wget::fetch { "ohmyzsh::fetch-${name}-${filename}":
+    wget::fetch { "ohmyzsh::fetch-${user}-${filename}":
       source      => $url,
       destination => $fullpath,
-      user        => $name,
+      user        => $user,
       require     => File[$themepath],
     }
   } elsif $source != 'UNSET' {
     file { $fullpath:
       ensure  => present,
       source  => $source,
-      owner   => $name,
+      owner   => $user,
       require => File[$themepath],
     }
   } elsif $content != 'UNSET' {
     file { $fullpath:
       ensure  => present,
       content => $content,
-      owner   => $name,
+      owner   => $user,
       require => File[$themepath],
     }
   } else {
