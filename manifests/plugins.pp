@@ -40,11 +40,17 @@ define ohmyzsh::plugins(
     $plugins_real = $plugins
   }
 
+  exec { "${name}-${plugins_real}-clean-plugins":
+    command => "/bin/sed -i ':a;N;$!ba;s/plugins=(\\n\W\+git\\n)/plugins=(git)/g' ${home}/.zshrc",
+    onlyif  => "/bin/grep -P '^plugins=\($' ${home}/.zshrc"
+  }
+
   file_line { "${name}-${plugins_real}-install":
     path    => "${home}/.zshrc",
     line    => "plugins=(${plugins_real})",
     match   => '^plugins=',
-    require => Ohmyzsh::Install[$name]
+    require => [Ohmyzsh::Install[$name],
+                Exec["${name}-${plugins_real}-clean-plugins"]]
   }
 
 }
