@@ -16,30 +16,39 @@ testcases = {
 }
 
 describe 'ohmyzsh::theme' do
-  testcases.each do |user, values|
-    context "using case #{user}" do
-      let(:title) { user }
-      let(:params) { values[:params] }
-      it do
-        should contain_file_line("#{user}-#{values[:expect][:theme]}-install")
-          .with_path("#{values[:expect][:home]}/.zshrc")
-          .with_line(%Q(ZSH_THEME="#{values[:expect][:theme]}"))
+  on_supported_os.each do |os,facts|
+    context "on #{os}" do
+      let(:facts) do
+        facts
       end
-    end
-  end
-  context 'using bad data' do
-    let(:title) { 'user' }
-    context 'using array' do
-      let(:params) { { theme: ['this','is an array'] } }
-      it { expect { should compile }.to raise_error }
-    end
-    context 'using hash' do
-      let(:params) { { theme: { 'this' => 'is a hash' } } }
-      it { expect { should compile }.to raise_error }
-    end
-    context 'using integer' do
-      let(:params) { { plugins: 1 } }
-      it { expect { should compile }.to raise_error }
+
+      testcases.each do |user, values|
+        context "using case #{user}" do
+          let(:pre_condition) { "ohmyzsh::install { '#{user}': }" }
+          let(:title) { user }
+          let(:params) { values[:params] }
+          it do
+            should contain_file_line("#{user}-#{values[:expect][:theme]}-install")
+              .with_path("#{values[:expect][:home]}/.zshrc")
+              .with_line(%Q(ZSH_THEME="#{values[:expect][:theme]}"))
+          end
+        end
+      end
+      context 'using bad data' do
+        let(:title) { 'user' }
+        context 'using array' do
+          let(:params) { { theme: ['this','is an array'] } }
+          it { expect { should compile }.to raise_error RSpec::Expectations::ExpectationNotMetError }
+        end
+        context 'using hash' do
+          let(:params) { { theme: { 'this' => 'is a hash' } } }
+          it { expect { should compile }.to raise_error RSpec::Expectations::ExpectationNotMetError }
+        end
+        context 'using integer' do
+          let(:params) { { plugins: 1 } }
+          it { expect { should compile }.to raise_error RSpec::Expectations::ExpectationNotMetError }
+        end
+      end
     end
   end
 end

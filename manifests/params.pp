@@ -2,7 +2,7 @@
 class ohmyzsh::params {
 
   case $::osfamily {
-    'Redhat': {
+    'RedHat': {
       $zsh = '/bin/zsh'
     }
     default: {
